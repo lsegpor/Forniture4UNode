@@ -1,0 +1,49 @@
+POST http://localhost:3000/api/componentes
+Content-Type: application/json
+
+{
+  "nombre": "a",
+  "precio": 350,
+  "fecha_importacion": "2021-10-10",
+  "en_stock": true,
+"material": "aa"
+}
+
+###
+
+GET http://localhost:3000/api/componentes
+
+###
+
+GET http://localhost:3000/api/componentes/materiales
+
+###
+
+GET http://localhost:3000/api/componentes/materiales/conglomerado
+
+###
+
+GET http://localhost:3000/api/componentes/buscar?nombre=bal
+Content-Type: application/json
+
+###
+
+DELETE http://localhost:3000/api/componentes/10
+
+###
+
+PUT http://localhost:3000/api/componentes/6
+Content-Type: application/json
+
+{
+  "id_componente": 6,
+  "nombre": "Puerta doble",
+  "precio": 10,
+  "fecha_importacion": "2025-01-29",
+  "en_stock": false,
+  "material": "Madera"
+}
+
+###
+
+GET http://localhost:3000/api/componentes/6

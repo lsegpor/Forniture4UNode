@@ -1,0 +1,66 @@
+POST http://localhost:3000/api/mueble
+Content-Type: application/json
+
+{
+  "mueble": {
+    "nombre": "Mesa de roble",
+    "precio_base": 150.00,
+    "fecha_entrega": "2024-02-15",
+    "requiere_montar": true
+  },
+  "componentes": [
+    { "id_componente": 1 },
+    { "id_componente": 2 }
+  ]
+}
+
+###
+
+GET http://localhost:3000/api/mueble
+
+###
+
+GET http://localhost:3000/api/mueble/buscar?nombre=mesa
+Content-Type: application/json
+
+###
+
+GET http://localhost:3000/api/mueble/fechaentrega/2025-03-01
+Content-Type: application/json
+
+###
+
+DELETE http://localhost:3000/api/mueble/1
+
+###
+
+GET http://localhost:3000/api/mueble/17
+
+###
+
+PUT http://localhost:3000/api/mueble/21
+Content-Type: application/json
+
+{
+  "mueble": {
+    "id_mueble": 21,
+    "nombre": "Mueble Moderno",
+    "precio_base": 199.99,
+    "fecha_entrega": "2025-03-10",
+    "requiere_montar": true
+  },
+  "componentes": [
+    {
+      "id_componente": 6,
+      "cantidad": 2
+    },
+    {
+      "id_componente": 3,
+      "cantidad": 1
+    },
+    {
+      "id_componente": 4,
+      "cantidad": 0 
+    }
+  ]
+}
