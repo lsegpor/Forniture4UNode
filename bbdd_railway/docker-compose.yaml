@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=metro.proxy.rlwy.net:50578
+      - PMA_PORT=50578
+      - PMA_USER=root
+      - PMA_PASSWORD=CmiCpglHvbxFRAwVnZkGKGPgJmkYFOnl
