@@ -6,7 +6,7 @@ const express = require("express");
 // Importar librería path, para manejar rutas de ficheros en el servidor
 const path = require("path");
 // Importar libreria CORS
-//const cors = require("cors");
+const cors = require("cors");
 // Importar gestores de rutas
 const componenteRoutes = require("./routes/componenteRoutes");
 const muebleRoutes = require("./routes/muebleRoutes");
@@ -18,7 +18,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Configurar CORS para admitir cualquier origen
-//app.use(cors());
+app.use(cors());
 
 // Configurar rutas de la API Rest
 app.use("/api/componentes", componenteRoutes);
