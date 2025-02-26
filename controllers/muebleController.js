@@ -36,9 +36,9 @@ class MuebleController {
     }
   }
 
-  async getMueblesByNombre (req, res) {
+  async getMueblesByNombre(req, res) {
     const { nombre } = req.query; // Obtenemos el nombre de la consulta
-  
+
     try {
       // Buscar los componentes que contengan el nombre dado (usando LIKE)
       console.log("Nombre:", nombre);
@@ -49,22 +49,26 @@ class MuebleController {
           },
         },
       });
-  
+
       if (muebles.length === 0) {
-        return res.status(404).json({ message: `No se encontraron muebles con el nombre: ${nombre}` });
+        return res
+          .status(404)
+          .json({
+            message: `No se encontraron muebles con el nombre: ${nombre}`,
+          });
       }
-  
+
       // Devolver los componentes encontrados
       res.json(muebles);
     } catch (error) {
-      console.error('Error al buscar muebles:', error);
-      res.status(500).json({ error: 'Error al buscar los muebles' });
+      console.error("Error al buscar muebles:", error);
+      res.status(500).json({ error: "Error al buscar los muebles" });
     }
   }
 
   async getMueblesByFecha(req, res) {
     const { fecha } = req.params; // Obtener la fecha desde los parámetros de la URL
-  
+
     try {
       const muebles = await Mueble.findAll({
         where: {
@@ -73,11 +77,13 @@ class MuebleController {
           },
         },
       });
-  
+
       if (muebles.length === 0) {
-        return res.status(404).json({ message: `No hay muebles con entrega antes de ${fecha}` });
+        return res
+          .status(404)
+          .json({ message: `No hay muebles con entrega antes de ${fecha}` });
       }
-  
+
       res.json(muebles);
     } catch (error) {
       console.error("Error al buscar muebles por fecha:", error);
@@ -168,56 +174,65 @@ class MuebleController {
     const t = await sequelize.transaction();
 
     try {
-        // Actualizar el mueble
-        const muebleExistente = await Mueble.findByPk(id_mueble);
-        if (!muebleExistente) {
-            return res.status(404).json(Respuesta.error(null, "Mueble no encontrado"));
+      // Actualizar el mueble
+      const muebleExistente = await Mueble.findByPk(id_mueble);
+      if (!muebleExistente) {
+        return res
+          .status(404)
+          .json(Respuesta.error(null, "Mueble no encontrado"));
+      }
+
+      await muebleExistente.update(mueble, { transaction: t });
+
+      // Procesar los componentes
+      for (let componente of componentes) {
+        const { id_componente, cantidad } = componente;
+
+        // Buscar si el componente ya existe en la relación
+        const muebleComponente = await MuebleComponente.findOne({
+          where: {
+            id_mueble,
+            id_componente,
+          },
+          transaction: t,
+        });
+
+        if (muebleComponente) {
+          if (cantidad === 0) {
+            // Si la cantidad es 0, eliminamos el componente
+            await muebleComponente.destroy({ transaction: t });
+          } else {
+            // Si ya existe, actualizamos la cantidad
+            await muebleComponente.update({ cantidad }, { transaction: t });
+          }
+        } else if (cantidad > 0) {
+          // Si no existe, insertamos el nuevo componente con la cantidad
+          await MuebleComponente.create(
+            {
+              id_mueble,
+              id_componente,
+              cantidad,
+            },
+            { transaction: t }
+          );
         }
+      }
 
-        await muebleExistente.update(mueble, { transaction: t });
-
-        // Procesar los componentes
-        for (let componente of componentes) {
-            const { id_componente, cantidad } = componente;
-
-            // Buscar si el componente ya existe en la relación
-            const muebleComponente = await MuebleComponente.findOne({
-                where: {
-                    id_mueble,
-                    id_componente
-                },
-                transaction: t
-            });
-
-            if (muebleComponente) {
-                if (cantidad === 0) {
-                    // Si la cantidad es 0, eliminamos el componente
-                    await muebleComponente.destroy({ transaction: t });
-                } else {
-                    // Si ya existe, actualizamos la cantidad
-                    await muebleComponente.update({ cantidad }, { transaction: t });
-                }
-            } else if (cantidad > 0) {
-                // Si no existe, insertamos el nuevo componente con la cantidad
-                await MuebleComponente.create({
-                    id_mueble,
-                    id_componente,
-                    cantidad
-                }, { transaction: t });
-            }
-        }
-
-        // Confirmar la transacción
-        await t.commit();
-        res.status(200).json(Respuesta.exito(muebleExistente, "Mueble actualizado correctamente"));
-
+      // Confirmar la transacción
+      await t.commit();
+      res
+        .status(200)
+        .json(
+          Respuesta.exito(muebleExistente, "Mueble actualizado correctamente")
+        );
     } catch (error) {
-        await t.rollback();
-        console.error("Error al actualizar el mueble:", error);
-        res.status(500).json(Respuesta.error(error, "Error al actualizar el mueble"));
+      await t.rollback();
+      console.error("Error al actualizar el mueble:", error);
+      res
+        .status(500)
+        .json(Respuesta.error(error, "Error al actualizar el mueble"));
     }
-}
-
+  }
 
   // Handles deletion of a type by its ID (implementation pending)
   async deleteMueble(req, res) {

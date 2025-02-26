@@ -34,7 +34,7 @@ DELETE http://localhost:3000/api/mueble/1
 
 ###
 
-GET http://localhost:3000/api/mueble/17
+GET http://localhost:3000/api/mueble/26
 
 ###
 

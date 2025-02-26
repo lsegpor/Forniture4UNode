@@ -2,7 +2,6 @@
 const express = require('express');
 const router = express.Router();
 const muebleController = require('../controllers/muebleController');
-const mueble = require('../models/mueble');
 
 router.get('/', muebleController.getAllMueble);
 router.get('/fechaentrega/:fecha', muebleController.getMueblesByFecha);
