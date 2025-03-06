@@ -27,12 +27,6 @@ app.use("/api/mueble", muebleRoutes);
 //Configurar el middleware para servir archivos estáticos desde el directorio 'public\old_js_vainilla'
 app.use(express.static(path.join(__dirname, "public")));
 
-//Ruta para manejar las solicitudes al archivo index.html
-//app.get('/', (req, res) => {
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
 // Iniciar el servidor
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
@@ -41,5 +35,11 @@ app.listen(port, () => {
 if (process.env.NODE_ENV !== "test") {
   console.log(`Servidor escuchando en el puerto ${port}`);
 }
+
+app.get("*", (req, res) => {
+  if (!req.path.startsWith("/api/")) { // Evita que afecte a las rutas de la API
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+  }
+});
 
 module.exports = app;
