@@ -1,0 +1,86 @@
+@baseUrl = http://localhost:3000/api
+@contentType = application/json
+
+POST {{baseUrl}}/empresa/register
+Content-Type: {{contentType}}
+
+{
+  "email": "empresa1@ejemplo.com",
+  "password": "Contraseña123",
+  "nombre_empresa": "Muebles Modernos SL",
+  "cif_nif_nie": "B12345678",
+  "direccion": "Calle Comercial 45, Madrid",
+  "nombre_personal": "María",
+  "apellidos": "González López",
+  "ofertas": true
+}
+
+###
+
+POST {{baseUrl}}/empresa/login
+Content-Type: {{contentType}}
+
+{
+  "email": "empresa1@ejemplo.com",
+  "password": "Contraseña123"
+}
+
+###
+
+POST {{baseUrl}}/empresa/login
+Content-Type: {{contentType}}
+
+{
+  "email": "empresa1@ejemplo.com",
+  "password": "ContraseñaIncorrecta"
+}
+
+###
+
+POST {{baseUrl}}/empresa/login
+Content-Type: {{contentType}}
+
+{
+  "email": "noexiste@ejemplo.com",
+  "password": "Cualquiera123"
+}
+
+###
+
+POST {{baseUrl}}/empresa/register
+Content-Type: {{contentType}}
+
+{
+  "email": "empresa1@ejemplo.com",
+  "password": "OtraContraseña",
+  "nombre_empresa": "Empresa Duplicada SL",
+  "cif_nif_nie": "C11223344",
+  "direccion": "Calle Nueva 12, Valencia",
+  "nombre_personal": "Luis",
+  "apellidos": "Sánchez García",
+  "ofertas": true
+}
+
+###
+
+POST {{baseUrl}}/empresa/register
+Content-Type: {{contentType}}
+
+{
+  "email": "otra@ejemplo.com",
+  "password": "OtraContraseña",
+  "nombre_empresa": "Otra Empresa SL",
+  "cif_nif_nie": "B12345678",
+  "direccion": "Calle Nueva 12, Valencia",
+  "nombre_personal": "Luis",
+  "apellidos": "Sánchez García",
+  "ofertas": true
+}
+
+###
+
+GET {{baseUrl}}/empresa/
+
+###
+
+POST {{baseUrl}}/empresa/logout

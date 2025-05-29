@@ -1,0 +1,74 @@
+
+### Variables de entorno para las pruebas
+@baseUrl = http://localhost:3000/api
+@contentType = application/json
+
+###
+
+POST http://localhost:3000/api/usuario/register
+Content-Type: application/json
+
+{
+  "email": "usuario1@example.com",
+  "password": "Contraseña123",
+  "nombre": "Juan",
+  "apellidos": "Pérez García",
+  "direccion": "Calle Principal 123, Ciudad",
+  "f_nacimiento": "1990-05-15",
+  "sexo": "hombre",
+  "ofertas": true
+}
+
+###
+
+POST http://localhost:3000/api/usuario/login
+Content-Type: application/json
+
+{
+  "email": "usuario2@example.com",
+  "password": "Contraseña123"
+}
+
+###
+
+POST http://localhost:3000/api/usuario/login
+Content-Type: application/json
+
+{
+  "email": "usuario1@example.com",
+  "password": "ContraseñaIncorrecta"
+}
+
+###
+
+POST http://localhost:3000/api/usuario/login
+Content-Type: application/json
+
+{
+  "email": "noexiste@example.com",
+  "password": "Cualquiera123"
+}
+
+###
+
+POST http://localhost:3000/api/usuario/register
+Content-Type: application/json
+
+{
+  "email": "usuario1@example.com",
+  "password": "NuevaContraseña",
+  "nombre": "Carlos",
+  "apellidos": "Martínez Rodríguez",
+  "direccion": "Plaza Mayor 789, Ciudad",
+  "f_nacimiento": "1995-03-10",
+  "sexo": "hombre",
+  "ofertas": true
+}
+
+### Obtener todos los usuarios (con autenticación)
+GET {{baseUrl}}/usuario/
+# REST Client guardará automáticamente la cookie del login anterior
+
+### Cerrar sesión
+POST {{baseUrl}}/usuario/logout
+# REST Client enviará la cookie del token automáticamente

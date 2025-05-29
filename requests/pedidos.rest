@@ -1,0 +1,151 @@
+@baseUrl = http://localhost:3000/api
+@contentType = application/json
+@empresaToken = Bearer []
+
+POST {{baseUrl}}/usuario/login
+Content-Type: {{contentType}}
+
+{
+  "email": "usuario1@example.com",
+  "password": "Contraseña123"
+}
+
+###
+
+POST {{baseUrl}}/empresa/login
+Content-Type: {{contentType}}
+
+{
+  "email": "empresa1@ejemplo.com",
+  "password": "Contraseña123"
+}
+
+###
+
+POST {{baseUrl}}/pedidos
+Content-Type: {{contentType}}
+
+{
+  "id_usuario": 1,
+  "productos": [
+    {
+      "id_producto": 23,
+      "tipo_producto": "componente",
+      "cantidad": 1
+    },
+    {
+      "id_producto": 24,
+      "tipo_producto": "componente",
+      "cantidad": 1
+    }
+  ]
+}
+
+###
+
+POST {{baseUrl}}/pedidos
+Content-Type: {{contentType}}
+
+{
+  "id_usuario": 1,
+  "productos": []
+}
+
+###
+
+POST {{baseUrl}}/pedidos
+Content-Type: {{contentType}}
+
+{
+  "id_usuario": 99999,
+  "productos": [
+    {
+      "id_producto": 1,
+      "tipo_producto": "componente",
+      "cantidad": 1
+    }
+  ]
+}
+
+###
+
+POST {{baseUrl}}/pedidos
+Content-Type: {{contentType}}
+
+{
+  "id_usuario": 1,
+  "productos": [
+    {
+      "id_producto": 99999,
+      "tipo_producto": "componente",
+      "cantidad": 1
+    }
+  ]
+}
+
+###
+
+POST {{baseUrl}}/pedidos
+Content-Type: {{contentType}}
+
+{
+  "id_usuario": 1,
+  "productos": [
+    {
+      "id_producto": 23,
+      "tipo_producto": "componente",
+      "cantidad": 1000
+    }
+  ]
+}
+
+### 7. OBTENER PEDIDOS DE UN USUARIO (propietario)
+GET {{baseUrl}}/pedidos/usuario/1
+
+### 8. OBTENER PEDIDOS DE UN USUARIO CON PAGINACIÓN
+GET {{baseUrl}}/pedidos/usuario/1?limite=5&pagina=1&orden=DESC
+
+### 9. OBTENER PEDIDOS DE OTRO USUARIO (debe fallar si no es propietario - 403)
+GET {{baseUrl}}/pedidos/usuario/2
+
+### 10. OBTENER PEDIDOS SIN TOKEN (debe fallar - 401)
+GET {{baseUrl}}/pedidos/usuario/1
+
+### 11. OBTENER TODOS LOS PEDIDOS (SOLO EMPRESAS)
+GET {{baseUrl}}/pedidos
+Authorization: {{empresaToken}}
+
+### 12. OBTENER TODOS LOS PEDIDOS CON FILTROS (SOLO EMPRESAS)
+GET {{baseUrl}}/pedidos?limite=10&pagina=1&orden=ASC&fecha_desde=2024-01-01&fecha_hasta=2025-12-31
+Authorization: {{empresaToken}}
+
+### 13. OBTENER TODOS LOS PEDIDOS FILTRADOS POR USUARIO (SOLO EMPRESAS)
+GET {{baseUrl}}/pedidos?id_usuario_filtro=1
+Authorization: {{empresaToken}}
+
+### 14. OBTENER TODOS LOS PEDIDOS COMO USUARIO NORMAL (debe fallar - 403)
+GET {{baseUrl}}/pedidos
+
+###
+
+POST {{baseUrl}}/pedidos/verificar-stock
+Content-Type: {{contentType}}
+
+{
+  "productos": [
+    {
+      "id_producto": 23,
+      "tipo_producto": "componente",
+      "cantidad_solicitada": 2
+    },
+    {
+      "id_producto": 24,
+      "tipo_producto": "componente",
+      "cantidad_solicitada": 5
+    }
+  ]
+}
+
+### 20. ELIMINAR UN PEDIDO (SOLO EMPRESAS)
+DELETE {{baseUrl}}/pedidos/5
+Authorization: {{empresaToken}}
