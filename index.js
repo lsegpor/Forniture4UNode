@@ -19,29 +19,36 @@ const cookieParser = require("cookie-parser");
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*"); // Reemplaza * con tu dominio en producción
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
-
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Configurar middleware para analizar JSON en las solicitudes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// Configurar CORS para admitir cualquier origen
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Especifica exactamente tu origen frontend
-    credentials: true, // Permite credenciales
-    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+
+// configuración CORS que funciona para ambos entornos:
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Permitir requests sin origin (como apps móviles o Postman)
+    if (!origin) return callback(null, true);
+
+    const allowedOrigins = [
+      "http://localhost:5173", // Desarrollo con Vite
+      "http://localhost:3000", // Desarrollo con Create React App
+      "https://forniture4u-production.up.railway.app", // Tu frontend en producción
+    ];
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("No permitido por CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser()); // Para analizar cookies
 
 // Configurar rutas de la API Rest
