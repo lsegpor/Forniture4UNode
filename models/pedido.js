@@ -20,9 +20,13 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     precio_total: {
-      type: DataTypes.DECIMAL(50,0),
+      type: DataTypes.DOUBLE,
       allowNull: false
-    }
+    },
+    estado: {
+      type: DataTypes.ENUM('pendiente','procesando','finalizado'),
+      allowNull: false
+    },
   }, {
     sequelize,
     tableName: 'pedido',

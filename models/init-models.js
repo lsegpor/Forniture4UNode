@@ -1,7 +1,6 @@
 var DataTypes = require("sequelize").DataTypes;
 var _componentes = require("./componentes");
 var _empresa = require("./empresa");
-var _mensaje = require("./mensaje");
 var _mueble = require("./mueble");
 var _mueble_componentes = require("./mueble_componentes");
 var _pedido = require("./pedido");
@@ -11,7 +10,6 @@ var _usuario = require("./usuario");
 function initModels(sequelize) {
   var componentes = _componentes(sequelize, DataTypes);
   var empresa = _empresa(sequelize, DataTypes);
-  var mensaje = _mensaje(sequelize, DataTypes);
   var mueble = _mueble(sequelize, DataTypes);
   var mueble_componentes = _mueble_componentes(sequelize, DataTypes);
   var pedido = _pedido(sequelize, DataTypes);
@@ -22,23 +20,18 @@ function initModels(sequelize) {
   mueble.belongsToMany(componentes, { as: 'id_componente_componentes', through: mueble_componentes, foreignKey: "id_mueble", otherKey: "id_componente" });
   mueble_componentes.belongsTo(componentes, { as: "id_componente_componente", foreignKey: "id_componente"});
   componentes.hasMany(mueble_componentes, { as: "mueble_componentes", foreignKey: "id_componente"});
-  mensaje.belongsTo(empresa, { as: "id_empresa_empresa", foreignKey: "id_empresa"});
-  empresa.hasMany(mensaje, { as: "mensajes", foreignKey: "id_empresa"});
   mueble.belongsTo(empresa, { as: "id_empresa_empresa", foreignKey: "id_empresa"});
   empresa.hasMany(mueble, { as: "muebles", foreignKey: "id_empresa"});
   mueble_componentes.belongsTo(mueble, { as: "id_mueble_mueble", foreignKey: "id_mueble"});
   mueble.hasMany(mueble_componentes, { as: "mueble_componentes", foreignKey: "id_mueble"});
   pedido_producto.belongsTo(pedido, { as: "id_pedido_pedido", foreignKey: "id_pedido"});
   pedido.hasMany(pedido_producto, { as: "pedido_productos", foreignKey: "id_pedido"});
-  mensaje.belongsTo(usuario, { as: "id_usuario_usuario", foreignKey: "id_usuario"});
-  usuario.hasMany(mensaje, { as: "mensajes", foreignKey: "id_usuario"});
   pedido.belongsTo(usuario, { as: "id_usuario_usuario", foreignKey: "id_usuario"});
   usuario.hasMany(pedido, { as: "pedidos", foreignKey: "id_usuario"});
 
   return {
     componentes,
     empresa,
-    mensaje,
     mueble,
     mueble_componentes,
     pedido,

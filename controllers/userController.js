@@ -17,6 +17,128 @@ const models = initModels(sequelize);
 const User = models.usuario;
 
 class UserController {
+  async updateUser(req, res) {
+    try {
+      console.log("Datos recibidos:", req.body);
+
+      const {
+        nombre,
+        apellidos,
+        email,
+        direccion,
+        f_nacimiento,
+        sexo,
+        ofertas,
+      } = req.body;
+
+      // Obtener ID del usuario autenticado
+      const id_usuario =
+        req.usuarioLogueado.sub || req.usuarioLogueado.id_usuario;
+      console.log("ID Usuario:", id_usuario);
+
+      if (!id_usuario) {
+        return res
+          .status(400)
+          .json(Respuesta.error(null, "No se pudo identificar al usuario"));
+      }
+
+      // Verificar que el usuario existe
+      const user = await User.findByPk(id_usuario);
+      if (!user) {
+        return res
+          .status(404)
+          .json(Respuesta.error(null, "Usuario no encontrado"));
+      }
+
+      console.log("Usuario encontrado:", user.dataValues);
+
+      // Verificar si el email ya existe (si se está cambiando)
+      if (email && email !== user.email) {
+        const existingUser = await User.findOne({
+          where: {
+            email,
+            id_usuario: { [require("sequelize").Op.ne]: id_usuario },
+          },
+        });
+
+        if (existingUser) {
+          return res
+            .status(400)
+            .json(
+              Respuesta.error(null, "El email ya está en uso por otro usuario")
+            );
+        }
+      }
+
+      // Actualizar los datos
+      const updatedData = {};
+      if (nombre !== undefined) updatedData.nombre = nombre;
+      if (apellidos !== undefined) updatedData.apellidos = apellidos;
+      if (email !== undefined) updatedData.email = email;
+      if (direccion !== undefined) updatedData.direccion = direccion;
+      if (f_nacimiento !== undefined) updatedData.f_nacimiento = f_nacimiento;
+      if (sexo !== undefined) updatedData.sexo = sexo;
+      if (ofertas !== undefined) updatedData.ofertas = ofertas;
+
+      console.log("Datos a actualizar:", updatedData);
+
+      await user.update(updatedData);
+
+      // Devolver los datos actualizados sin la contraseña
+      const userResponse = await User.findByPk(id_usuario, {
+        attributes: { exclude: ["password"] },
+      });
+
+      console.log("Usuario actualizado:", userResponse.dataValues);
+
+      const response = Respuesta.exito(
+        userResponse.dataValues,
+        "Usuario actualizado exitosamente"
+      );
+      console.log("Respuesta final:", response);
+
+      res
+        .status(200)
+        .json(
+          Respuesta.exito(userResponse, "Usuario actualizado exitosamente")
+        );
+    } catch (error) {
+      console.error("Error al actualizar usuario:", error);
+      res.status(500).json(Respuesta.error(null, "Error interno del servidor"));
+    }
+  }
+
+  async getProfile(req, res) {
+    try {
+      // Obtener ID del usuario autenticado
+      const id_usuario =
+        req.usuarioLogueado.sub || req.usuarioLogueado.id_usuario;
+
+      if (!id_usuario) {
+        return res
+          .status(400)
+          .json(Respuesta.error(null, "No se pudo identificar al usuario"));
+      }
+
+      const user = await User.findByPk(id_usuario, {
+        attributes: { exclude: ["password"] },
+      });
+
+      if (!user) {
+        return res
+          .status(404)
+          .json(Respuesta.error(null, "Usuario no encontrado"));
+      }
+
+      res
+        .status(200)
+        .json(Respuesta.exito(user, "Perfil obtenido exitosamente"));
+    } catch (error) {
+      console.error("Error al obtener perfil:", error);
+      res.status(500).json(Respuesta.error(null, "Error interno del servidor"));
+    }
+  }
+
   async login(req, res) {
     const { email, password } = req.body;
 

@@ -59,7 +59,6 @@ const handleMulterError = (err, req, res, next) => {
 };
 
 router.get("/", muebleController.getAllMueble);
-router.get("/fechaentrega/:fecha", muebleController.getMueblesByFecha);
 router.get("/buscar", muebleController.getMueblesByNombre);
 router.get("/:id_mueble/componentes", muebleController.getMuebleComponentes);
 router.get("/:id_mueble", muebleController.getMuebleById);

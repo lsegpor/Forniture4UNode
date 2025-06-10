@@ -185,6 +185,145 @@ class CompanyController {
         .json(Respuesta.error(null, "Error al obtener las empresas"));
     }
   }
+
+  /**
+   * Actualizar datos de la empresa
+   */
+  async updateCompany(req, res) {
+    try {
+      const {
+        nombre_empresa,
+        cif_nif_nie,
+        direccion,
+        nombre_personal,
+        apellidos,
+        email,
+        ofertas,
+      } = req.body;
+
+      // Obtener ID de la empresa autenticada
+      const id_empresa =
+        req.usuarioLogueado.sub || req.usuarioLogueado.id_empresa;
+
+      if (!id_empresa) {
+        return res
+          .status(400)
+          .json(Respuesta.error(null, "No se pudo identificar la empresa"));
+      }
+
+      // Verificar que la empresa existe
+      const empresa = await Empresa.findByPk(id_empresa);
+      if (!empresa) {
+        return res
+          .status(404)
+          .json(Respuesta.error(null, "Empresa no encontrada"));
+      }
+
+      // Verificar si el email ya existe (si se está cambiando)
+      if (email && email !== empresa.email) {
+        const existingEmpresa = await Empresa.findOne({
+          where: {
+            email,
+            id_empresa: { [require("sequelize").Op.ne]: id_empresa },
+          },
+        });
+
+        if (existingEmpresa) {
+          return res
+            .status(400)
+            .json(
+              Respuesta.error(null, "El email ya está en uso por otra empresa")
+            );
+        }
+      }
+
+      // Verificar si el CIF/NIF/NIE ya existe (si se está cambiando)
+      if (cif_nif_nie && cif_nif_nie !== empresa.cif_nif_nie) {
+        const existingCIF = await Empresa.findOne({
+          where: {
+            cif_nif_nie,
+            id_empresa: { [require("sequelize").Op.ne]: id_empresa },
+          },
+        });
+
+        if (existingCIF) {
+          return res
+            .status(400)
+            .json(
+              Respuesta.error(
+                null,
+                "El CIF/NIF/NIE ya está en uso por otra empresa"
+              )
+            );
+        }
+      }
+
+      // Actualizar los datos
+      const updatedData = {};
+      if (nombre_empresa !== undefined)
+        updatedData.nombre_empresa = nombre_empresa;
+      if (cif_nif_nie !== undefined) updatedData.cif_nif_nie = cif_nif_nie;
+      if (direccion !== undefined) updatedData.direccion = direccion;
+      if (nombre_personal !== undefined)
+        updatedData.nombre_personal = nombre_personal;
+      if (apellidos !== undefined) updatedData.apellidos = apellidos;
+      if (email !== undefined) updatedData.email = email;
+      if (ofertas !== undefined) updatedData.ofertas = ofertas;
+
+      await empresa.update(updatedData);
+
+      // Devolver los datos actualizados sin la contraseña
+      const empresaResponse = await Empresa.findByPk(id_empresa, {
+        attributes: { exclude: ["password"] },
+      });
+
+      res
+        .status(200)
+        .json(
+          Respuesta.exito(
+            empresaResponse.dataValues,
+            "Empresa actualizada exitosamente"
+          )
+        );
+    } catch (error) {
+      console.error("Error al actualizar empresa:", error);
+      res.status(500).json(Respuesta.error(null, "Error interno del servidor"));
+    }
+  }
+
+  /**
+   * Obtener perfil de la empresa autenticada
+   */
+  async getProfile(req, res) {
+    try {
+      // Obtener ID de la empresa autenticada
+      const id_empresa =
+        req.usuarioLogueado.sub || req.usuarioLogueado.id_empresa;
+
+      if (!id_empresa) {
+        return res
+          .status(400)
+          .json(Respuesta.error(null, "No se pudo identificar la empresa"));
+      }
+
+      const empresa = await Empresa.findByPk(id_empresa, {
+        attributes: { exclude: ["password"] },
+      });
+
+      if (!empresa) {
+        return res
+          .status(404)
+          .json(Respuesta.error(null, "Empresa no encontrada"));
+      }
+
+      res
+        .status(200)
+        .json(Respuesta.exito(empresa, "Perfil obtenido exitosamente"));
+    } catch (error) {
+      console.error("Error al obtener perfil de empresa:", error);
+      res.status(500).json(Respuesta.error(null, "Error interno del servidor"));
+    }
+  }
 }
 
 module.exports = new CompanyController();

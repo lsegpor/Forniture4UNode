@@ -178,19 +178,35 @@ const validarPropietarioPedido = async (req, res, next) => {
     const { id_usuario } = req.params;
     const usuarioLogueado = req.usuarioLogueado; // Viene del middleware verifyToken
 
+    console.log("Validando propietario - Params:", { id_usuario });
+    console.log("Usuario logueado completo:", usuarioLogueado);
+
     // Si es empresa, puede ver todos los pedidos
     if (usuarioLogueado.role === "empresa") {
+      console.log("Usuario es empresa, permitiendo acceso");
       return next();
     }
 
+    // Obtener el ID del usuario logueado (JWT usa 'sub' como estándar)
+    const idUsuarioLogueado =
+      usuarioLogueado.sub || usuarioLogueado.id_usuario || usuarioLogueado.id;
+
+    console.log("Comparando IDs:", {
+      parametro: parseInt(id_usuario),
+      logueado: parseInt(idUsuarioLogueado),
+      coincide: parseInt(id_usuario) === parseInt(idUsuarioLogueado),
+    });
+
     // Si es usuario normal, solo puede ver sus propios pedidos
-    if (parseInt(id_usuario) !== usuarioLogueado.id_usuario) {
+    if (parseInt(id_usuario) !== parseInt(idUsuarioLogueado)) {
+      console.log("Acceso denegado - IDs no coinciden");
       return res.status(403).json({
         success: false,
         message: "No tienes permisos para acceder a estos pedidos",
       });
     }
 
+    console.log("Acceso permitido");
     next();
   } catch (error) {
     console.error("Error validando propietario del pedido:", error);

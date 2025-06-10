@@ -14,6 +14,9 @@ const { logMensaje } = require("../utils/logger.js");
 const verifyToken = (req, res, next) => {
   let token = null;
 
+  console.log('Headers recibidos:', req.headers);
+  console.log('Cookies recibidas:', req.cookies);
+
   // Prioridad 1: Buscar token en el header Authorization
   const authHeader = req.headers["authorization"];
   if (authHeader && authHeader.startsWith("Bearer ")) {
@@ -38,6 +41,8 @@ const verifyToken = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, config.secretKey);
     req.usuarioLogueado = decoded;
+
+    req.user = decoded;
 
     // Log para debugging
     console.log("Usuario autenticado:", {
@@ -70,13 +75,13 @@ const verifyToken = (req, res, next) => {
 // Middleware para verificar si el usuario tiene un rol específico
 const verificarRol = (rolesPermitidos) => {
   return (req, res, next) => {
-    if (!req.user) {
+    if (!req.usuarioLogueado) {
       return res
         .status(401)
         .json({ ok: false, mensaje: "No autorizado.", datos: null });
     }
 
-    if (!rolesPermitidos.includes(req.user.role)) {
+    if (!rolesPermitidos.includes(req.usuarioLogueado.role)) {
       return res.status(403).json({
         ok: false,
         mensaje: "Acceso denegado. No tienes permisos suficientes.",

@@ -133,38 +133,6 @@ class MuebleController {
     }
   }
 
-  async getMueblesByFecha(req, res) {
-    const { fecha } = req.params; // Obtener la fecha desde los parámetros de la URL
-
-    try {
-      const muebles = await Mueble.findAll({
-        where: {
-          fecha_entrega: {
-            [Op.lte]: fecha, // Busca muebles cuya fecha_entrega sea menor o igual a la ingresada
-          },
-        },
-        include: [
-          {
-            model: Empresa,
-            as: "id_empresa_empresa",
-            attributes: ["nombre_empresa"],
-          },
-        ],
-      });
-
-      if (muebles.length === 0) {
-        return res
-          .status(404)
-          .json({ message: `No hay muebles con entrega antes de ${fecha}` });
-      }
-
-      res.json(muebles);
-    } catch (error) {
-      console.error("Error al buscar muebles por fecha:", error);
-      res.status(500).json({ error: "Error al buscar los muebles" });
-    }
-  }
-
   // Handles retrieval of a single type by its ID (implementation pending)
   async getMuebleById(req, res) {
     //console.log("Valor recibido en el backend:", req.params);
@@ -554,6 +522,8 @@ class MuebleController {
   }
 
   async getMuebleComponentes(req, res) {
+    console.log("getMuebleComponentes llamado con ID:", req.params.id_mueble);
+
     try {
       const { id_mueble } = req.params;
 
@@ -580,7 +550,7 @@ class MuebleController {
         include: [
           {
             model: Componentes,
-            as: "id_componente_componentes", // Usa el mismo alias que tienes en tus otras consultas
+            as: "id_componente_componente", // Usa el mismo alias que tienes en tus otras consultas
             attributes: [
               "id_componente",
               "nombre",
@@ -596,13 +566,13 @@ class MuebleController {
 
       // Formatear la respuesta para el frontend
       const componentesFormateados = componentesMueble.map((item) => ({
-        id_componente: item.id_componente_componentes.id_componente,
-        nombre: item.id_componente_componentes.nombre,
-        precio: item.id_componente_componentes.precio,
-        material: item.id_componente_componentes.material,
-        descripcion: item.id_componente_componentes.descripcion,
+        id_componente: item.id_componente_componente.id_componente,
+        nombre: item.id_componente_componente.nombre,
+        precio: item.id_componente_componente.precio,
+        material: item.id_componente_componente.material,
+        descripcion: item.id_componente_componente.descripcion,
         cantidad: item.cantidad, // Cantidad necesaria para el mueble
-        stock_disponible: item.id_componente_componentes.cantidad, // Stock actual del componente
+        stock_disponible: item.id_componente_componente.cantidad, // Stock actual del componente
       }));
 
       res.json(

@@ -17,6 +17,22 @@ const {
   errorHandler,
 } = require("../middlewares/pedidoMiddleware");
 
+router.get(
+  "/estadisticas/por-fecha",
+  verifyToken,
+  esEmpresa,
+  sanitizarDatos,
+  validarFechas,
+  pedidoController.getPedidosPorFecha
+);
+
+router.get(
+  "/empresa/mis-pedidos",
+  verifyToken,
+  esEmpresa,
+  pedidoController.getPedidosByEmpresa
+);
+
 router.post(
   "/",
   verifyToken,
@@ -24,14 +40,6 @@ router.post(
   validarPedido,
   puedeCrearPedido,
   pedidoController.createPedido
-);
-
-router.post(
-  "/verificar-stock",
-  verifyToken,
-  sanitizarDatos,
-  validarProductosStock,
-  pedidoController.verificarStock
 );
 
 router.get(
@@ -45,6 +53,14 @@ router.get(
   pedidoController.getPedidosByUser
 );
 
+router.post(
+  "/verificar-stock",
+  verifyToken,
+  sanitizarDatos,
+  validarProductosStock,
+  pedidoController.verificarStock
+);
+
 router.get(
   "/",
   verifyToken,
@@ -53,6 +69,14 @@ router.get(
   validarPaginacion,
   validarFechas,
   pedidoController.getAllPedidos
+);
+
+router.put(
+  "/:id_pedido/estado",
+  verifyToken,
+  validarParametrosNumericos,
+  sanitizarDatos,
+  pedidoController.updateEstadoPedido
 );
 
 router.delete(
