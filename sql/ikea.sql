@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: db
--- Tiempo de generación: 08-04-2025 a las 16:52:27
+-- Tiempo de generación: 14-06-2025 a las 17:14:23
 -- Versión del servidor: 8.0.39
 -- Versión de PHP: 8.2.8
 
@@ -33,21 +33,25 @@ CREATE TABLE `componentes` (
   `precio` double NOT NULL,
   `fecha_importacion` date DEFAULT NULL,
   `material` varchar(50) NOT NULL,
-  `cantidad` int NOT NULL
+  `cantidad` int NOT NULL,
+  `descripcion` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `componentes`
 --
 
-INSERT INTO `componentes` (`id_componente`, `nombre`, `precio`, `fecha_importacion`, `material`, `cantidad`) VALUES
-(22, 'Tornillo de acero inoxidable', 2.99, '2025-02-03', 'Acero inoxidable', 0),
-(23, 'Tapa de madera para mesa', 50, '2024-12-30', 'Madera de roble', 0),
-(24, 'Ruedas para silla', 5.49, '2023-11-03', 'Plástico y metal', 0),
-(25, 'Almohadilla de cuero para sofá', 15.8, '2023-08-25', 'Cuero', 0),
-(26, 'Patas de metal para mesa', 30, '2025-01-10', 'Metal', 0),
-(27, 'Cajón', 60, '2024-05-20', 'Madera de roble', 0),
-(28, 'Tirador de cajón', 15, '2025-01-23', 'Metal', 0);
+INSERT INTO `componentes` (`id_componente`, `nombre`, `precio`, `fecha_importacion`, `material`, `cantidad`, `descripcion`) VALUES
+(1, 'Tornillo Phillips 4x50mm', 0.15, '2025-01-15', 'Acero inoxidable', 500, 'Tornillos de cabeza phillips para ensamblaje de muebles, resistentes a la corrosión'),
+(2, 'Bisagra para piano 180°', 3.25, '2025-02-01', 'Acero inoxidable', 120, 'Bisagras de piano que permiten apertura completa, ideales para puertas de armarios'),
+(3, 'Tablero melamina 60x40cm', 12.5, '2024-12-20', 'Melamina blanca', 85, 'Tableros de melamina de alta resistencia, perfectos para estantes y divisiones'),
+(4, 'Pata regulable altura', 8.75, '2025-01-10', 'Metal cromado', 200, 'Patas ajustables en altura de 15 a 20 cm, base antideslizante incluida'),
+(5, 'Tirador moderno 128mm', 4.5, '2025-02-10', 'Aluminio anodizado', 150, 'Tiradores de diseño moderno con acabado mate, fijación con dos tornillos'),
+(6, 'Rueda giratoria con freno', 6.8, '2024-11-25', 'Plástico y metal', 80, 'Ruedas de 50mm de diámetro con sistema de frenado, soportan hasta 25kg'),
+(7, 'Cajón deslizable 40cm', 25, '2025-01-20', 'Madera de pino', 45, 'Cajones premontados con guías telescópicas, cierre suave incluido'),
+(8, 'Panel posterior 80x120cm', 18.9, '2024-12-15', 'Contrachapado', 60, 'Paneles traseros para armarios, grosor 5mm, pre-perforados para ventilación'),
+(9, 'Cerradura magnética', 12.3, '2025-02-05', 'Plástico y metal', 90, 'Sistema de cierre magnético sin ruido, instalación sin herramientas'),
+(10, 'Led strip 1 metro', 15.6, '2025-01-30', 'Silicona y LED', 75, 'Tira LED adhesiva con regulador de intensidad, luz blanca cálida 3000K');
 
 -- --------------------------------------------------------
 
@@ -63,7 +67,7 @@ CREATE TABLE `empresa` (
   `nombre_personal` varchar(50) NOT NULL,
   `apellidos` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `email` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
+  `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `ofertas` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -72,23 +76,9 @@ CREATE TABLE `empresa` (
 --
 
 INSERT INTO `empresa` (`id_empresa`, `nombre_empresa`, `cif_nif_nie`, `direccion`, `nombre_personal`, `apellidos`, `email`, `password`, `ofertas`) VALUES
-(1, 'pepe s.a', '12345678A', 'blabla, 2, 23456', 'pepe', 'manzanos rodriguez', 'pepe@gmail.com', 'pepe', 0);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `mensaje`
---
-
-CREATE TABLE `mensaje` (
-  `id_mensaje` int NOT NULL,
-  `id_usuario` int NOT NULL,
-  `id_empresa` int NOT NULL,
-  `emisor` enum('usuario','empresa') NOT NULL,
-  `texto` varchar(500) NOT NULL,
-  `respuesta` varchar(200) NOT NULL,
-  `f_envio` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+(1, 'Muebles Nórdicos S.L.', 'B12345678', 'Polígono Industrial Norte, Nave 15, Madrid', 'Patricia', 'González Ruiz', 'contacto@mueblenordico.com', '$2b$10$WvJTMzRVs09zwhlkhsPCF.w7a1HnKqLcIMAKBWrqxSQlcxB7IWERS', 1),
+(2, 'Diseño y Confort S.A.', 'A87654321', 'Calle Industria 89, Barcelona', 'Roberto', 'Vázquez Herrera', 'info@disenoconfort.com', '$2b$10$h4EZf/hgQeOgikoBQBvgxuTtsEKGUHzXYjYV3Ril0ZK4iUoLWSyk.', 1),
+(3, 'Maderas Artesanales', 'B11223344', 'Avenida del Mueble 12, Valencia', 'Carmen', 'Rodríguez Pérez', 'ventas@maderasartesanales.es', '$2b$10$ZlAHHY4GJVh1tEBOLhvQruL5nwcpie9mTmweV3F0JNYQvSN7gEHWG', 1);
 
 -- --------------------------------------------------------
 
@@ -102,20 +92,24 @@ CREATE TABLE `mueble` (
   `precio_base` double NOT NULL,
   `fecha_entrega` date NOT NULL,
   `requiere_montar` tinyint(1) NOT NULL,
-  `id_empresa` int NOT NULL
+  `id_empresa` int NOT NULL,
+  `imagen` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `descripcion` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `mueble`
 --
 
-INSERT INTO `mueble` (`id_mueble`, `nombre`, `precio_base`, `fecha_entrega`, `requiere_montar`, `id_empresa`) VALUES
-(24, 'Silla ergonómica', 120, '2025-01-31', 1, 1),
-(25, 'Mesa de comedor extensible', 300, '2024-02-20', 1, 1),
-(26, 'Estantería de madera', 85, '2025-01-26', 0, 1),
-(27, 'Sofá cama', 450, '2023-12-21', 1, 1),
-(28, 'Armario pequeño', 150, '2025-05-24', 0, 1),
-(29, 'Mesa de roble', 250, '2021-12-31', 1, 1);
+INSERT INTO `mueble` (`id_mueble`, `nombre`, `precio_base`, `fecha_entrega`, `requiere_montar`, `id_empresa`, `imagen`, `descripcion`) VALUES
+(1, 'Estantería', 89.99, '2025-06-15', 1, 1, '/uploads/muebles/mueble-1749901093968-894823834.jpeg', 'Estantería de 5 baldas en madera de pino, diseño nórdico minimalista. Ideal para salón o dormitorio.'),
+(2, 'Mesa escritorio', 149.5, '2025-06-20', 1, 1, '/uploads/muebles/mueble-1749901157024-586776185.jpeg', 'Mesa de escritorio con dos cajones laterales y espacio para cables. Superficie resistente a rayones.'),
+(3, 'Silla oficina', 199, '2025-06-18', 0, 2, '/uploads/muebles/mueble-1749901368887-803335248.jpeg', 'Silla ergonómica con respaldo alto, reposabrazos ajustables y ruedas silenciosas.'),
+(4, 'Armario', 299.99, '2025-06-25', 1, 2, '/uploads/muebles/mueble-1749901440839-215856774.jpeg', 'Armario de 3 puertas con barra para colgar y 2 cajones inferiores. Espejo interior opcional.'),
+(5, 'Mesa comedor', 249, '2025-06-22', 1, 3, '/uploads/muebles/mueble-1749901654701-693564137.jpeg', 'Mesa extensible para 4-6 personas, madera maciza de roble con acabado natural.'),
+(6, 'Taburete bar', 45.9, '2025-06-12', 0, 3, '/uploads/muebles/mueble-1749901710912-913725311.jpeg', 'Taburete con altura regulable, asiento acolchado y reposapiés cromado.'),
+(7, 'Cómoda', 179.99, '2025-06-28', 1, 1, '/uploads/muebles/mueble-1749901212589-154002587.jpeg', 'Cómoda de 4 cajones con tiradores modernos, ideal para dormitorio o recibidor.'),
+(8, 'Mesita noche', 69.5, '2025-06-16', 1, 2, '/uploads/muebles/mueble-1749901533456-174347262.jpeg', 'Mesita de noche con cajón y estante abierto.');
 
 -- --------------------------------------------------------
 
@@ -134,17 +128,32 @@ CREATE TABLE `mueble_componentes` (
 --
 
 INSERT INTO `mueble_componentes` (`id_mueble`, `id_componente`, `cantidad`) VALUES
-(24, 24, 4),
-(25, 23, 1),
-(25, 26, 4),
-(26, 22, 2),
-(27, 22, 10),
-(27, 25, 2),
-(28, 22, 10),
-(28, 27, 4),
-(28, 28, 4),
-(29, 22, 2),
-(29, 23, 1);
+(1, 1, 20),
+(1, 3, 5),
+(1, 8, 1),
+(2, 1, 12),
+(2, 4, 3),
+(2, 5, 2),
+(2, 7, 2),
+(3, 1, 8),
+(3, 6, 5),
+(4, 1, 30),
+(4, 2, 6),
+(4, 5, 5),
+(4, 8, 1),
+(4, 9, 3),
+(5, 1, 16),
+(5, 4, 4),
+(6, 1, 6),
+(6, 4, 1),
+(7, 1, 24),
+(7, 5, 4),
+(7, 7, 4),
+(7, 8, 1),
+(8, 1, 12),
+(8, 5, 1),
+(8, 7, 1),
+(8, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -156,8 +165,20 @@ CREATE TABLE `pedido` (
   `id_pedido` int NOT NULL,
   `id_usuario` int NOT NULL,
   `f_pedido` date NOT NULL,
-  `precio_total` decimal(50,0) NOT NULL
+  `precio_total` double NOT NULL,
+  `estado` enum('pendiente','procesando','finalizado') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `pedido`
+--
+
+INSERT INTO `pedido` (`id_pedido`, `id_usuario`, `f_pedido`, `precio_total`, `estado`) VALUES
+(1, 1, '2025-06-10', 239.49, 'finalizado'),
+(2, 2, '2025-06-10', 149.5, 'procesando'),
+(3, 3, '2025-06-10', 518.99, 'pendiente'),
+(4, 1, '2025-06-10', 115.4, 'pendiente'),
+(5, 4, '2025-06-10', 89.99, 'procesando');
 
 --
 -- Disparadores `pedido`
@@ -181,6 +202,22 @@ CREATE TABLE `pedido_producto` (
   `cantidad` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Volcado de datos para la tabla `pedido_producto`
+--
+
+INSERT INTO `pedido_producto` (`id_producto_pedido`, `id_pedido`, `id_producto`, `tipo_producto`, `cantidad`) VALUES
+(1, 1, 2, 'mueble', 1),
+(2, 1, 5, 'mueble', 1),
+(3, 2, 2, 'mueble', 1),
+(4, 3, 4, 'mueble', 1),
+(5, 3, 3, 'mueble', 1),
+(6, 3, 1, 'mueble', 1),
+(7, 4, 6, 'mueble', 2),
+(8, 4, 8, 'mueble', 1),
+(9, 4, 5, 'componente', 2),
+(10, 5, 1, 'mueble', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -190,7 +227,7 @@ CREATE TABLE `pedido_producto` (
 CREATE TABLE `usuario` (
   `id_usuario` int NOT NULL,
   `email` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
+  `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `nombre` varchar(50) NOT NULL,
   `apellidos` varchar(100) NOT NULL,
   `direccion` varchar(100) NOT NULL,
@@ -198,6 +235,17 @@ CREATE TABLE `usuario` (
   `sexo` enum('hombre','mujer','otro') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `ofertas` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `usuario`
+--
+
+INSERT INTO `usuario` (`id_usuario`, `email`, `password`, `nombre`, `apellidos`, `direccion`, `f_nacimiento`, `sexo`, `ofertas`) VALUES
+(1, 'ana.martinez@email.com', '$2b$10$OhFMuBY9U7NghhvR8eMp1.nROKfYmeTNlUHFcdjrqA6dswsl6fNmK', 'Ana', 'Martínez Silva', 'Calle Gran Vía 45, Madrid', '1985-03-12', 'mujer', 1),
+(2, 'carlos.ruiz@email.com', '$2b$10$JcWhTcCvE.qOGoZr8q7B3eVFEfE0FxwVj.S74cj5xOcdudzORpZzm', 'Carlos', 'Ruiz Mendoza', 'Avenida Diagonal 123, Barcelona', '1990-07-23', 'hombre', 1),
+(3, 'lucia.fernandez@email.com', '$2b$10$UMvctf4JK7PXd4L6MpG1uON03ClPxPBIb/vR8xtmOaRErSoDknVSu', 'Lucía', 'Fernández López', 'Plaza Mayor 8, Salamanca', '1992-11-05', 'mujer', 1),
+(4, 'miguel.santos@email.com', '$2b$10$SUvGV.itZrYECvad6earK.Xex111.nJdXwvz2F8deq39S5PZLt93e', 'Miguel', 'Santos García', 'Calle Sierpes 67, Sevilla', '1988-01-18', 'hombre', 1),
+(5, 'elena.jimenez@email.com', '$2b$10$EAZf96zIDmDAJYq.kRXbTelRiONyXGmnEmZV932.KOnv84ZxqOaSO', 'Elena', 'Jiménez Morales', 'Rambla Nova 34, Tarragona', '1995-09-14', 'mujer', 1);
 
 --
 -- Índices para tablas volcadas
@@ -214,14 +262,6 @@ ALTER TABLE `componentes`
 --
 ALTER TABLE `empresa`
   ADD PRIMARY KEY (`id_empresa`);
-
---
--- Indices de la tabla `mensaje`
---
-ALTER TABLE `mensaje`
-  ADD PRIMARY KEY (`id_mensaje`),
-  ADD KEY `fk_usuario_id` (`id_usuario`),
-  ADD KEY `fk_empresa_id` (`id_empresa`);
 
 --
 -- Indices de la tabla `mueble`
@@ -266,54 +306,41 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `componentes`
 --
 ALTER TABLE `componentes`
-  MODIFY `id_componente` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id_componente` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `empresa`
 --
 ALTER TABLE `empresa`
-  MODIFY `id_empresa` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT de la tabla `mensaje`
---
-ALTER TABLE `mensaje`
-  MODIFY `id_mensaje` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_empresa` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `mueble`
 --
 ALTER TABLE `mueble`
-  MODIFY `id_mueble` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id_mueble` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `pedido`
 --
 ALTER TABLE `pedido`
-  MODIFY `id_pedido` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_pedido` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `pedido_producto`
 --
 ALTER TABLE `pedido_producto`
-  MODIFY `id_producto_pedido` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_producto_pedido` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_usuario` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restricciones para tablas volcadas
 --
-
---
--- Filtros para la tabla `mensaje`
---
-ALTER TABLE `mensaje`
-  ADD CONSTRAINT `fk_empresa_id` FOREIGN KEY (`id_empresa`) REFERENCES `empresa` (`id_empresa`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_usuario_id` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `mueble`
