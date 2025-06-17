@@ -38,6 +38,11 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.STRING(255),
         allowNull: true,
       },
+      imagen_public_id: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        unique: "imagen_public_id",
+      },
       descripcion: {
         type: DataTypes.STRING(500),
         allowNull: false,

@@ -17,60 +17,6 @@ const MuebleComponentes = models.mueble_componentes;
 const Componentes = models.componentes;
 const Empresa = models.empresa;
 
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
-
-// Configurar almacenamiento para multer
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // Crear directorio si no existe
-    const uploadDir = "./uploads/muebles";
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    // Generar nombre único para el archivo
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, "mueble-" + uniqueSuffix + ext);
-  },
-});
-
-// Filtro para asegurar que solo se suban imágenes
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image/")) {
-    cb(null, true);
-  } else {
-    cb(new Error("Solo se permiten archivos de imagen"), false);
-  }
-};
-
-// Configurar multer
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB límite
-  },
-});
-
-// Middleware para manejar errores de multer
-const handleMulterError = (err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    // Error de multer
-    return res
-      .status(400)
-      .json(Respuesta.error(null, `Error al subir la imagen: ${err.message}`));
-  } else if (err) {
-    // Otro tipo de error
-    return res.status(400).json(Respuesta.error(null, err.message));
-  }
-  next();
-};
-
 class MuebleController {
   // Handles retrieval of all types
   async getAllMueble(req, res) {
@@ -229,7 +175,8 @@ class MuebleController {
       };
 
       if (req.file) {
-        muebleData.imagen = `/uploads/muebles/${req.file.filename}`;
+        muebleData.imagen = req.file.path; // URL completa de Cloudinary
+        muebleData.imagen_public_id = req.file.filename; // Para poder eliminar después
       }
 
       const muebleNuevo = await Mueble.create(muebleData, { transaction: t });
@@ -280,14 +227,6 @@ class MuebleController {
           },
         ],
       });
-
-      // Añadir la URL completa de la imagen
-      if (muebleCompleto.imagen) {
-        // Usar la URL base de tu API
-        muebleCompleto.dataValues.imagen_url = `${
-          process.env.API_URL || "http://localhost:3000"
-        }${muebleCompleto.imagen}`;
-      }
 
       res
         .status(201)
@@ -340,7 +279,7 @@ class MuebleController {
       let rutaImagen;
 
       if (req.file) {
-        rutaImagen = `/uploads/muebles/${req.file.filename}`;
+        rutaImagen = req.file.path;
       } else if (req.body.imagen_null === "true") {
         rutaImagen = null;
       } else {
@@ -494,6 +433,23 @@ class MuebleController {
         return res
           .status(404)
           .json(Respuesta.error(null, `Mueble con ID ${id} no encontrado`));
+      }
+
+      // Eliminar imagen de Cloudinary si existe
+      if (mueble.imagen_public_id) {
+        const cloudinary = require("../config/cloudinary");
+        try {
+          await cloudinary.uploader.destroy(mueble.imagen_public_id);
+          console.log(
+            `Imagen eliminada de Cloudinary: ${mueble.imagen_public_id}`
+          );
+        } catch (cloudinaryError) {
+          console.error(
+            "Error eliminando imagen de Cloudinary:",
+            cloudinaryError
+          );
+          // Continuar con la eliminación del mueble aunque falle Cloudinary
+        }
       }
 
       const numFilas = await Mueble.destroy({
