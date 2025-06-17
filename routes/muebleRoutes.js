@@ -3,23 +3,23 @@ const express = require("express");
 const router = express.Router();
 const muebleController = require("../controllers/muebleController");
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../config/cloudinary"); // Asegúrate de crear este archivo
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // Crear directorio si no existe
-    const uploadDir = "./uploads/muebles";
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    // Generar nombre único para el archivo
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, "mueble-" + uniqueSuffix + ext);
+// Configuración de Cloudinary Storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "muebles", // carpeta en Cloudinary
+    allowed_formats: ["jpg", "jpeg", "png", "webp", "gif"],
+    transformation: [
+      {
+        width: 1200,
+        height: 800,
+        crop: "limit",
+        quality: "auto:good",
+      },
+    ],
   },
 });
 
@@ -58,6 +58,7 @@ const handleMulterError = (err, req, res, next) => {
   next();
 };
 
+// Rutas (sin cambios)
 router.get("/", muebleController.getAllMueble);
 router.get("/buscar", muebleController.getMueblesByNombre);
 router.get("/:id_mueble/componentes", muebleController.getMuebleComponentes);
