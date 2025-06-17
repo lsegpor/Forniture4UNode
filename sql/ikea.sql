@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: db
--- Tiempo de generación: 14-06-2025 a las 17:14:23
+-- Tiempo de generación: 17-06-2025 a las 20:04:03
 -- Versión del servidor: 8.0.39
 -- Versión de PHP: 8.2.8
 
@@ -174,11 +174,11 @@ CREATE TABLE `pedido` (
 --
 
 INSERT INTO `pedido` (`id_pedido`, `id_usuario`, `f_pedido`, `precio_total`, `estado`) VALUES
-(1, 1, '2025-06-10', 239.49, 'finalizado'),
+(1, 1, '2025-06-02', 239.49, 'finalizado'),
 (2, 2, '2025-06-10', 149.5, 'procesando'),
-(3, 3, '2025-06-10', 518.99, 'pendiente'),
-(4, 1, '2025-06-10', 115.4, 'pendiente'),
-(5, 4, '2025-06-10', 89.99, 'procesando');
+(3, 3, '2025-06-05', 518.99, 'pendiente'),
+(4, 1, '2025-05-28', 115.4, 'pendiente'),
+(5, 4, '2025-06-03', 89.99, 'procesando');
 
 --
 -- Disparadores `pedido`
